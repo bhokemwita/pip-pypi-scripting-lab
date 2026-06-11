@@ -1,14 +1,21 @@
 from datetime import datetime
-import os
 import requests
+from rich.console import Console
+
+console = Console()
 
 def fetch_data():
     """
     Fetches data from an external API.
     """
-    response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
+    with console.status("[bold green]Fetching data from API...", spinner="dots"):
+        response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
+
     if response.status_code == 200:
+        console.print("[bold blue]Data fetched successfully![/bold blue]")
         return response.json()
+
+    console.print("[bold red]Failed to fetch data.[/bold red]")
     return {}
 
 def generate_log(data):
@@ -29,7 +36,7 @@ def generate_log(data):
             file.write(f"{entry}\n")
 
     # STEP 4: Print a confirmation message with the filename
-    print(f"Log written to {filename}")
+    console.print(f"[bold cyan]Log written to [underline]{filename}[/underline][/bold cyan]")
 
     return filename
 
@@ -37,7 +44,7 @@ if __name__ == "__main__":
     # Fetch post data
     post = fetch_data()
     post_title = post.get("title", "No title found")
-    print(f"Fetched Post Title: {post_title}")
+    console.print(f"[bold yellow]Fetched Post Title:[/bold yellow] {post_title}")
 
     # Prepare log data
     log_data = [
